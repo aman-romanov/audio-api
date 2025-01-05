@@ -1,0 +1,821 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Audio API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api": {},
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Авторизация",
+                "description": "Авторизация пользователя и создание токена",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Авторизация прошла успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "JWT token",
+                                            "type": "string",
+                                            "example": "token_example_here"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход с аккаунта",
+                "description": "Выход и удаление токена",
+                "operationId": "logout",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Вы вышли из аккаунта",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Вы вышли из аккаунта"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация",
+                "description": "Регистрация нового пользователя",
+                "operationId": "register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_verify"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "User name",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "example": "newuser@example.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_verify": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Регистрация прошла успешно!",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Регистрация прошла успешно!"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "token_example_here"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/api/user/{user}": {
+            "put": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Изменение данных пользователя",
+                "description": "Изменение данных пользователя по ID",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_verify"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "User name",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "example": "newuser@example.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_verify": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User data updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Данные изменены"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/api/posts": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Вывод список постов",
+                "description": "Список постов с пагинацией",
+                "operationId": "3fda362e2e082b5357ac416e7767e435",
+                "responses": {
+                    "200": {
+                        "description": "Список",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Создание нового поста",
+                "description": "Новый пост",
+                "operationId": "dcb66200c3132996151884ac232cf439",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Вывод поста",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/posts/{post}": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Вывод одного поста",
+                "description": "Новый пост",
+                "operationId": "5042caf9a6c47bde39921c8f400e28b5",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID поста",
+                            "type": "integer",
+                            "example": "5"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Вывод поста",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Редактура одного поста",
+                "description": "Изменение существующего поста по ID",
+                "operationId": "fc17b67462ad71a7f4b287520462fd02",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID поста",
+                            "type": "integer",
+                            "example": "5"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PostRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Вывод поста",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/posts/{id}": {
+            "delete": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Удаление поста",
+                "description": "Удаление поста по ID",
+                "operationId": "9d99f2e42af2f722a058a86245aa856f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Пост удален"
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/user/{user}/posts": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Вывод постов пользователя по ID",
+                "description": "Вывод постов",
+                "operationId": "4bd7ae1c1d36b015b0db08bc45f9d29f",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID пользователя",
+                            "type": "integer",
+                            "example": "5"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/tags": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Вывод списка тэгов с постами",
+                "description": "Список тэгов с пагинацией",
+                "operationId": "65f85cc85cd13d2454b6c88ffff5cc3a",
+                "responses": {
+                    "200": {
+                        "description": "Список",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/tags/{tag}": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Вывод одного тэга с постами",
+                "operationId": "890706647a0186ae7289ff232e056564",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID тэга",
+                            "type": "integer",
+                            "example": "5"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Вывод поста",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PostRequest": {
+                "description": "Пост с аудио",
+                "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "user_id",
+                    "is_active",
+                    "file",
+                    "tags"
+                ],
+                "properties": {
+                    "title": {
+                        "description": "Загаловок поста",
+                        "type": "string",
+                        "example": "Заголовок"
+                    },
+                    "description": {
+                        "description": "Описание поста",
+                        "type": "text",
+                        "example": "Описание поста с аудио-файлом"
+                    },
+                    "user_id": {
+                        "description": "ID автора поста",
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "is_active": {
+                        "description": "Статус поста",
+                        "type": "boolean",
+                        "example": 1
+                    },
+                    "file": {
+                        "description": "MP3 аудио-файл",
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "tags": {
+                        "description": "Тэги поста",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Инди"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PostResponse": {
+                "description": "Пост с аудио",
+                "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "user_id",
+                    "is_active",
+                    "file",
+                    "tags"
+                ],
+                "properties": {
+                    "title": {
+                        "description": "Загаловок поста",
+                        "type": "string",
+                        "example": "Заголовок"
+                    },
+                    "description": {
+                        "description": "Описание поста",
+                        "type": "text",
+                        "example": "Описание поста с аудио-файлом"
+                    },
+                    "user_id": {
+                        "description": "ID автора поста",
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "is_active": {
+                        "description": "Статус поста",
+                        "type": "boolean",
+                        "example": 1
+                    },
+                    "file_path": {
+                        "type": "string",
+                        "example": "compressed/audio_name.mp3"
+                    },
+                    "tags": {
+                        "description": "Тэги поста",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Инди"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Tag": {
+                "description": "Тэги и посты",
+                "required": [
+                    "id",
+                    "name",
+                    "posts"
+                ],
+                "properties": {
+                    "title": {
+                        "description": "Загаловок тэга",
+                        "type": "string",
+                        "example": "Заголовок"
+                    },
+                    "posts": {
+                        "description": "Посты с этим тэгом",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "title": {
+                                    "description": "Загаловок поста",
+                                    "type": "string",
+                                    "example": "Заголовок"
+                                },
+                                "description": {
+                                    "description": "Описание поста",
+                                    "type": "text",
+                                    "example": "Описание поста с аудио-файлом"
+                                },
+                                "user_id": {
+                                    "description": "ID автора поста",
+                                    "type": "integer",
+                                    "example": 4
+                                },
+                                "is_active": {
+                                    "description": "Статус поста",
+                                    "type": "boolean",
+                                    "example": 1
+                                },
+                                "file_path": {
+                                    "type": "string",
+                                    "example": "compressed/audio_name.mp3"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "description": "Пользователь",
+                "required": [
+                    "id",
+                    "name",
+                    "email"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "The user's unique identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "The user's name",
+                        "type": "string",
+                        "example": "Jackeline Walsh MD"
+                    },
+                    "email": {
+                        "description": "The user's email address",
+                        "type": "string",
+                        "example": "awaelchi@example.com"
+                    },
+                    "email_verified_at": {
+                        "description": "Timestamp when the email was verified",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-05T11:04:39.000000Z"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the user was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-05T11:04:39.000000Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the user was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-01-05T11:04:39.000000Z"
+                    },
+                    "deleted_at": {
+                        "description": "Timestamp when the user was deleted, null if not deleted",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Post",
+            "description": "Post"
+        },
+        {
+            "name": "Tag",
+            "description": "Tag"
+        }
+    ]
+}
